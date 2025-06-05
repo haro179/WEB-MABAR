@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BY1 MABAR FF/ML</title>
+<style>
+  /* Reset & basic */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1, h2, h3 {
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .fadeIn {
+    animation: fadeIn 0.7s ease forwards;
+  }
+  @keyframes fadeIn {
+    from {opacity:0;}
+    to {opacity:1;}
+  }
+
+  /* Container */
+  #app {
+    max-width: 480px;
+    width: 90%;
+    background: rgba(30,30,30,0.85);
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin-top: 20px;
+    box-shadow: 0 0 20px #00bfff88;
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 16px 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    background-color: #135ba0;
+    color: white;
+  }
+
+  button {
+    background: #00bfff;
+    color: #004466;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 8px #00bfffaa;
+    user-select: none;
+  }
+  button:hover {
+    background: #0099dd;
+    box-shadow: 0 6px 12px #0099ddbb;
+  }
+
+  /* Welcome */
+  #welcomeMessage {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #00eaff;
+  }
+
+  /* Forms */
+  form {
+    margin-top: 10px;
+  }
+
+  /* Menu */
+  #mainMenu button {
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+    border-radius: 8px;
+  }
+
+  /* Room list */
+  #roomList {
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .roomCard {
+    background: #112233dd;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    padding: 12px;
+    color: #cdf4ff;
+    box-shadow: 0 0 8px #00bfffaa;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  .roomLogo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .roomInfo {
+    flex: 1;
+  }
+
+  .roomInfo h4 {
+    margin: 0 0 6px 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .roomInfo h4 .adminTag {
+    background: #ffbb33;
+    color: #331f00;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    user-select: none;
+  }
+
+  .roomInfo p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #aaddffcc;
+  }
+
+  /* WA Link */
+  .waLink {
+    background: #25d366;
+    color: white;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-decoration: none;
+    user-select: none;
+    box-shadow: 0 0 8px #25d366cc;
+    transition: background-color 0.3s ease;
+  }
+  .waLink:hover {
+    background: #1ebe5a;
+  }
+
+  /* Logo FF & ML */
+  .logoFF {
+    filter: drop-shadow(0 0 4px #ff6600aa);
+  }
+  .logoML {
+    filter: drop-shadow(0 0 4px #00ccffaa);
+  }
+
+  /* Admin Tag */
+  .adminTag {
+    background: #f39c12;
+    color: #2c3e50;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    #app {
+      margin-top: 10px;
+      padding: 15px 15px;
+    }
+    .roomLogo {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="welcome" class="fadeIn">
+    <h1>Selamat Datang di BY1 MABAR FF/ML</h1>
+    <p id="welcomeMessage">Silakan login dulu ya!</p>
+  </div>
+
+  <!-- Login Form -->
+  <form id="loginForm" class="fadeIn">
+    <input type="text" id="username" placeholder="Username" required autocomplete="off" />
+    <input type="password" id="password" placeholder="Password" required autocomplete="off" />
+    <button type="submit">Login</button>
+  </form>
+
+  <!-- Input Nama Panggilan -->
+  <form id="nicknameForm" class="fadeIn" style="display:none;">
+    <h3>Masukkan Nama Panggilan Kamu</h3>
+    <input type="text" id="nickname" placeholder="Nama panggilan" required autocomplete="off" />
+    <button type="submit">Lanjut</button>
+  </form>
+
+  <!-- Main Menu -->
+  <div id="mainMenu" class="fadeIn" style="display:none;">
+    <h2>Halo, <span id="displayName"></span> <span id="adminBadge" style="display:none;">⭐ Admin</span></h2>
+    <button id="btnCreateRoom">Buat Room</button>
+    <button id="btnSearchRoom">Cari Room</button>
+    <button id="btnLogout" style="background:#ff4444;">Logout</button>
+  </div>
+
+  <!-- Create Room Form -->
+  <form id="createRoomForm" style="display:none;" class="fadeIn">
+    <h3>Buat Room Baru</h3>
+    <label for="gameSelect">Pilih Game:</label>
+    <select id="gameSelect" required>
+      <option value="" disabled selected>Pilih Game</option>
+      <option value="FF">Free Fire</option>
+      <option value="ML">Mobile Legends</option>
+    </select>
+    <input type="text" id="gameId" placeholder="ID Game" required autocomplete="off" />
+    <input type="text" id="waNumber" placeholder="Nomor WhatsApp (contoh: 6281234567890)" required autocomplete="off" />
+    <input type="text" id="description" placeholder="Keterangan (opsional)" autocomplete="off" />
+    <button type="submit">Simpan Room</button>
+    <button type="button" id="btnCancelCreateRoom" style="background:#888;">Batal</button>
+  </form>
+
+  <!-- Search Room List -->
+  <div id="searchRoomList" style="display:none;" class="fadeIn">
+    <h3>Daftar Room Tersedia</h3>
+    <div id="roomList"></div>
+    <button id="btnBackMenu" style="background:#888; margin-top: 12px;">Kembali</button>
+  </div>
+</div>
+
+<script>
+  // Data admin username-password sesuai permintaan
+  const adminAccounts = {
+    Admin1: 'Admin10',
+    Admin2: 'Admin10',
+    Admin3: 'Admin10',
+    Admin4: 'Admin10',
+    Admin5: 'Admin10',
+    Admin6: 'Admin10',
+    Admin7: 'Admin10',
+    Admin8: 'Admin10',
+    Admin9: 'Admin10',
+    Admin10: 'Admin1'
+  };
+
+  // Simpan user login dan rooms di memory localStorage
+  let currentUser = null;  // { username, nickname, isAdmin }
+  let rooms = [];
+
+  // Helper untuk cek admin
+  function isAdmin(username, password) {
+    return adminAccounts[username] === password;
+  }
+
+  // Simpan rooms ke localStorage
+  function saveRooms() {
+    localStorage.setItem('mabarRooms', JSON.stringify(rooms));
+  }
+
+  // Load rooms dari localStorage
+  function loadRooms() {
+    const saved = localStorage.getItem('mabarRooms');
+    if (saved) {
+      rooms = JSON.parse(saved);
+    }
+  }
+
+  // Render daftar room
+  function renderRooms() {
+    const roomListEl = document.getElementById('roomList');
+    roomListEl.innerHTML = '';
+
+    if (rooms.length === 0) {
+      roomListEl.innerHTML = '<p style="text-align:center; color:#aaa;">Belum ada room dibuat.</p>';
+      return;
+    }
+
+    rooms.forEach((room, idx) => {
+      // Logo berdasarkan game
+      let logoSrc = '';
+      let logoClass = '';
+      if (room.game === 'FF') {
+        logoSrc = 'https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Free_Fire_Logo.svg/1200px-Free_Fire_Logo.svg.png';
+        logoClass = 'logoFF';
+      } else if (room.game === 'ML') {
+        logoSrc = 'https://upload.wikimedia.org/wikipedia/en/thumb/4/4e/Mobile_Legends_Logo.svg/1200px-Mobile_Legends_Logo.svg.png';
+        logoClass = 'logoML';
+      }
+
+      const adminTag = room.isAdmin ? '<span class="adminTag">Admin</span>' : '';
+
+      const roomCard = document.createElement('div');
+      roomCard.className = 'roomCard fadeIn';
+      roomCard.innerHTML = `
+        <img src="${logoSrc}" alt="${room.game} logo" class="roomLogo ${logoClass}" />
+        <div class="roomInfo">
+          <h4>${room.nickname} ${adminTag}</h4>
+          <p><strong>Game ID:</strong> ${room.gameId}</p>
+          <p><strong>Keterangan:</strong> ${room.description || '-'}</p>
+        </div>
+        <a href="https://wa.me/${room.waNumber}" target="_blank" class="waLink" rel="noopener noreferrer">WA</a>
+      `;
+      roomListEl.appendChild(roomCard);
+    });
+  }
+
+  // Reset semua form dan tampilkan login
+  function resetToLogin() {
+    currentUser = null;
+    rooms = [];
+    loadRooms();
+
+    document.getElementById('welcome').style.display = 'block';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('nicknameForm').style.display = 'none';
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('createRoomForm').style.display = 'none';
+    document.getElementById('searchRoomList').style.display = 'none';
+    document.getElementById('displayName').textContent = '';
+    document.getElementById('adminBadge').style.display = 'none';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('nickname').value = '';
+  }
+
+  // Show main menu
+  function showMainMenu() {
+    document.getElementById('welcome').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('nicknameForm').style.display = 'none';
+    document.getElementById('mainMenu').style.display = 'block';
+    document.getElementById('createRoomForm').style.display = 'none';
+    document.getElementById('searchRoomList').style.display = 'none';
+
+    document.getElementById('displayName').textContent = currentUser.nickname;
+    if (currentUser.isAdmin) {
+      document.getElementById('adminBadge').style.display = 'inline-block';
+    } else {
+      document.getElementById('adminBadge').style.display = 'none';
+    }
+  }
+
+  // Event: Login submit
+  document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!username || !password) {
+      alert('Username dan password harus diisi!');
+      return;
+    }
+
+    const admin = isAdmin(username, password);
+
+    // Untuk demo, user biasa password bebas asal bukan password admin
+    if (!admin && (password === 'Admin10' || password === 'Admin1')) {
+      alert('Password tersebut hanya untuk admin.');
+      return;
+    }
+
+    currentUser = {
+      username,
+      isAdmin: admin,
+      nickname: null
+    };
+
+    // Hide login, show nickname input
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('welcome').style.display = 'none';
+    document.getElementById('nicknameForm').style.display = 'block';
+    document.getElementById('nickname').focus();
+  });
+
+  // Event: Nickname submit
+  document.getElementById('nicknameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const nickname = document.getElementById('nickname').value.trim();
+    if (!nickname) {
+      alert('Nama panggilan harus diisi!');
+      return;
+    }
+    currentUser.nickname = nickname;
+    showMainMenu();
+  });
+
+  // Logout
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    resetToLogin();
+  });
+
+  // Show Create Room form
+  document.getElementById('btnCreateRoom').addEventListener('click', () => {
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('createRoomForm').style.display = 'block';
+    document.getElementById('gameSelect').value = '';
+    document.getElementById('gameId').value = '';
+    document.getElementById('waNumber').value = '';
+    document.getElementById('description').value = '';
+  });
+
+  // Cancel Create Room
+  document.getElementById('btnCancelCreateRoom').addEventListener('click', () => {
+    showMainMenu();
+  });
+
+  // Submit Create Room
+  document.getElementById('createRoomForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const game = document.getElementById('gameSelect').value;
+    const gameId = document.getElementById('gameId').value.trim();
+    const waNumber = document.getElementById('waNumber').value.trim();
+    const description = document.getElementById('description').value.trim();
+
+    if (!game || !gameId || !waNumber) {
+      alert('Game, ID Game, dan Nomor WA harus diisi!');
+      return;
+    }
+
+    // Simpan room
+    rooms.push({
+      game,
+      gameId,
+      waNumber,
+      description,
+      nickname: currentUser.nickname,
+      isAdmin: currentUser.isAdmin
+    });
+
+    saveRooms();
+    alert('Room berhasil dibuat!');
+
+    showMainMenu();
+  });
+
+  // Show Search Room list
+  document.getElementById('btnSearchRoom').addEventListener('click', () => {
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('createRoomForm').style.display = 'none';
+    document.getElementById('searchRoomList').style.display = 'block';
+
+    loadRooms();
+    renderRooms();
+  });
+
+  // Back to menu from search room
+  document.getElementById('btnBackMenu').addEventListener('click', () => {
+    showMainMenu();
+  });
+
+  // Init
+  resetToLogin();
+
+</script>
+</body>
+</html>
